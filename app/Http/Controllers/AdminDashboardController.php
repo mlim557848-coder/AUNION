@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Event;
 use App\Models\Announcement;
-use App\Models\Connection;
+use App\Models\Donation;        // ← changed from EventDonation
 
 class AdminDashboardController extends Controller
 {
@@ -33,6 +33,15 @@ class AdminDashboardController extends Controller
                                            ->take(3)
                                            ->get();
 
+        // Donations — approved only
+        $totalDonations  = Donation::where('status', 'approved')->sum('amount');
+        $totalDonors     = Donation::where('status', 'approved')->distinct('user_id')->count('user_id');
+        $recentDonations = Donation::with(['user', 'event'])
+                                   ->where('status', 'approved')
+                                   ->orderBy('created_at', 'desc')
+                                   ->take(5)
+                                   ->get();
+
         return view('admin.dashboard', compact(
             'totalAlumni',
             'pendingApprovals',
@@ -40,7 +49,10 @@ class AdminDashboardController extends Controller
             'totalAnnouncements',
             'recentAlumni',
             'upcomingEvents',
-            'recentAnnouncements'
+            'recentAnnouncements',
+            'totalDonations',
+            'totalDonors',
+            'recentDonations'
         ));
     }
 }

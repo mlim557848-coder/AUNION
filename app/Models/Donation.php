@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Donation extends Model
 {
     protected $fillable = [
+        'event_id',
         'user_id',
         'amount',
         'note',
@@ -20,6 +21,11 @@ class Donation extends Model
         'approved_at' => 'datetime',
     ];
 
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -30,19 +36,7 @@ class Donation extends Model
         return $this->belongsTo(User::class, 'approved_by');
     }
 
-    // Scopes
-    public function scopePending($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
-    public function scopeApproved($query)
-    {
-        return $query->where('status', 'approved');
-    }
-
-    public function scopeRejected($query)
-    {
-        return $query->where('status', 'rejected');
-    }
+    public function scopePending($query)  { return $query->where('status', 'pending'); }
+    public function scopeApproved($query) { return $query->where('status', 'approved'); }
+    public function scopeRejected($query) { return $query->where('status', 'rejected'); }
 }

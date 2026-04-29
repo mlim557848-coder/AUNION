@@ -31,9 +31,9 @@ class Event extends Model
     }
 
     public function donations()
-    {
-        return $this->hasMany(EventDonation::class);
-    }
+{
+    return $this->hasMany(\App\Models\Donation::class);
+}
 
     public function getTotalEventDonatedAttribute(): float
     {

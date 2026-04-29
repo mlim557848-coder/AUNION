@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Alumni;
 
 use App\Http\Controllers\Controller;
+use App\Models\Donation;         // ← changed
 use App\Models\Event;
 use App\Models\EventAttendee;
-use App\Models\EventDonation;
 use Illuminate\Http\Request;
 
 class AlumniEventController extends Controller
@@ -14,7 +14,7 @@ class AlumniEventController extends Controller
     {
         $userId = auth()->id();
 
-        $query = Event::with(['attendees', 'donations'])
+        $query = Event::with(['attendees'])
             ->where('is_archived', false);
 
         if ($request->filled('search')) {
@@ -71,13 +71,15 @@ class AlumniEventController extends Controller
             'note'   => 'nullable|string|max:255',
         ]);
 
-        EventDonation::create([
+        // Write to donations table (with pending status for admin approval)
+        Donation::create([
             'event_id' => $event->id,
             'user_id'  => auth()->id(),
             'amount'   => $request->amount,
             'note'     => $request->note,
+            'status'   => 'pending',
         ]);
 
-        return back()->with('success', 'Thank you for your donation of ₱' . number_format($request->amount, 2) . '!');
+        return back()->with('success', 'Thank you for your donation of ₱' . number_format($request->amount, 2) . '! It is pending admin approval.');
     }
 }
