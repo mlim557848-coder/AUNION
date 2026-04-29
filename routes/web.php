@@ -16,18 +16,10 @@ use App\Http\Controllers\Admin\AdminDonationController;
 use App\Http\Controllers\Alumni\AlumniEventController;
 use App\Http\Controllers\Alumni\AlumniDonationController;
 
+// ======================== TEMP — DELETE AFTER USE ========================
 Route::get('/run-setup-xyz999', function () {
-    try {
-        $controller = new \App\Http\Controllers\Admin\AdminDonationController();
-        $request = \Illuminate\Http\Request::create('/admin/donations', 'GET');
-        return $controller->index($request);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'error'   => $e->getMessage(),
-            'file'    => $e->getFile(),
-            'line'    => $e->getLine(),
-        ]);
-    }
+    \Artisan::call('optimize:clear');
+    return '<pre>' . \Artisan::output() . '</pre>';
 });
 
 // ======================== ROOT REDIRECT ========================
