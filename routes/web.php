@@ -16,6 +16,15 @@ use App\Http\Controllers\Admin\AdminDonationController;
 use App\Http\Controllers\Alumni\AlumniEventController;
 use App\Http\Controllers\Alumni\AlumniDonationController;
 
+// ======================== TEMP MIGRATION ROUTE — DELETE AFTER USE ========================
+Route::get('/run-setup-xyz999', function () {
+    if (app()->environment('production')) {
+        \Artisan::call('migrate', ['--force' => true]);
+        return '<pre>' . \Artisan::output() . '</pre>';
+    }
+    return 'Not production';
+});
+
 // ======================== ROOT REDIRECT ========================
 Route::get('/', function () {
     if (auth()->check()) {
@@ -51,13 +60,13 @@ Route::middleware(['auth', 'alumni.approved'])->prefix('alumni')->name('alumni.'
     // Profile — view another alumni's profile (from network page)
     Route::get('/profile/{user}', [ProfileController::class, 'showOther'])->name('profile.show');
 
-    
-   // Network
-    Route::get('/network',                              [NetworkController::class, 'index'])->name('network');
-    Route::post('/network/{user}/connect',              [NetworkController::class, 'connect'])->name('network.connect');
-    Route::post('/network/{connection}/accept',         [NetworkController::class, 'accept'])->name('network.accept');
-    Route::post('/network/{connection}/reject',         [NetworkController::class, 'reject'])->name('network.reject');
+    // Network
+    Route::get('/network',                            [NetworkController::class, 'index'])->name('network');
+    Route::post('/network/{user}/connect',            [NetworkController::class, 'connect'])->name('network.connect');
+    Route::post('/network/{connection}/accept',       [NetworkController::class, 'accept'])->name('network.accept');
+    Route::post('/network/{connection}/reject',       [NetworkController::class, 'reject'])->name('network.reject');
     Route::delete('/network/{connection}/disconnect', [NetworkController::class, 'disconnect'])->name('network.disconnect');
+
     // Events
     Route::get('/events',                 [AlumniEventController::class, 'index'])->name('events');
     Route::post('/events/{event}/rsvp',   [AlumniEventController::class, 'rsvp'])->name('events.rsvp');
@@ -100,10 +109,10 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('events/{event}/budget',   [AdminEventController::class, 'setBudget'])->name('events.budget.set');
 
     // Donations
-    Route::get('/donations',                      [AdminDonationController::class, 'index'])->name('donations.index');
-    Route::post('/donations/{donation}/approve',  [AdminDonationController::class, 'approve'])->name('donations.approve');
-    Route::post('/donations/{donation}/reject',   [AdminDonationController::class, 'reject'])->name('donations.reject');
-    Route::post('/donations/allocate', [AdminDonationController::class, 'allocate'])->name('donations.allocate');
+    Route::get('/donations',                     [AdminDonationController::class, 'index'])->name('donations.index');
+    Route::post('/donations/{donation}/approve', [AdminDonationController::class, 'approve'])->name('donations.approve');
+    Route::post('/donations/{donation}/reject',  [AdminDonationController::class, 'reject'])->name('donations.reject');
+    Route::post('/donations/allocate',           [AdminDonationController::class, 'allocate'])->name('donations.allocate');
 
     // Announcements
     Route::resource('announcements', AdminAnnouncementController::class);
