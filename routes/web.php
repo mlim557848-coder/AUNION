@@ -16,13 +16,11 @@ use App\Http\Controllers\Admin\AdminDonationController;
 use App\Http\Controllers\Alumni\AlumniEventController;
 use App\Http\Controllers\Alumni\AlumniDonationController;
 
-// ======================== TEMP MIGRATION ROUTE — DELETE AFTER USE ========================
 Route::get('/run-setup-xyz999', function () {
-    if (app()->environment('production')) {
-        \Artisan::call('migrate', ['--force' => true]);
-        return '<pre>' . \Artisan::output() . '</pre>';
-    }
-    return 'Not production';
+    return response()->json([
+        'donations_columns'   => \DB::select('DESCRIBE donations'),
+        'allocations_columns' => \DB::select('DESCRIBE event_budget_allocations'),
+    ]);
 });
 
 // ======================== ROOT REDIRECT ========================
