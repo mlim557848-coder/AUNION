@@ -17,10 +17,17 @@ use App\Http\Controllers\Alumni\AlumniEventController;
 use App\Http\Controllers\Alumni\AlumniDonationController;
 
 Route::get('/run-setup-xyz999', function () {
-    return response()->json([
-        'donations_columns'   => \DB::select('DESCRIBE donations'),
-        'allocations_columns' => \DB::select('DESCRIBE event_budget_allocations'),
-    ]);
+    try {
+        $controller = new \App\Http\Controllers\Admin\AdminDonationController();
+        $request = \Illuminate\Http\Request::create('/admin/donations', 'GET');
+        return $controller->index($request);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'error'   => $e->getMessage(),
+            'file'    => $e->getFile(),
+            'line'    => $e->getLine(),
+        ]);
+    }
 });
 
 // ======================== ROOT REDIRECT ========================
