@@ -11,7 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        
+
+        // Trust all proxies (required for Render + Cloudflare)
+        $middleware->trustProxies(at: '*');
+
         // Register your custom middleware here
         $middleware->alias([
             'alumni.approved' => \App\Http\Middleware\AlumniApproved::class,
